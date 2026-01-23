@@ -6,9 +6,24 @@ This file provides guidance for AI assistants working with the Lucidia Agents co
 
 Lucidia Agents is an AI agents framework designed to create, orchestrate, and deploy intelligent autonomous agents. The project aims to provide a modular, extensible architecture for building agent-based systems.
 
-**Repository Status**: New project - foundational structure being established.
+## Current State
 
-## Project Structure
+**Repository Status**: Greenfield project - initial setup required.
+
+**What exists now:**
+- This CLAUDE.md file (project guidance)
+- Git repository initialized
+
+**What needs to be created:**
+- Project scaffolding (package.json, tsconfig.json, etc.)
+- Source directory structure
+- Core framework components
+- Testing infrastructure
+- Documentation
+
+## Planned Project Structure
+
+When fully scaffolded, the project should follow this structure:
 
 ```
 lucidia-agents/
@@ -30,164 +45,185 @@ lucidia-agents/
 
 ## Technology Stack
 
-- **Language**: TypeScript (recommended for type safety in agent systems)
-- **Runtime**: Node.js
+- **Language**: TypeScript (strict mode enabled)
+- **Runtime**: Node.js >= 18.x
 - **Package Manager**: npm or pnpm
-- **Testing**: Jest or Vitest
+- **Testing**: Vitest (preferred) or Jest
 - **Linting**: ESLint with TypeScript support
 - **Formatting**: Prettier
 
-## Development Commands
+## Initial Setup Tasks
 
-Once the project is set up, standard commands will include:
+For AI assistants bootstrapping this project, follow these steps:
+
+### 1. Initialize Node.js Project
 
 ```bash
-# Install dependencies
-npm install
+npm init -y
+```
 
-# Run development server
-npm run dev
+### 2. Install Core Dependencies
 
-# Run tests
-npm test
+```bash
+# TypeScript and build tools
+npm install -D typescript tsx @types/node
 
-# Run tests in watch mode
-npm run test:watch
+# Linting and formatting
+npm install -D eslint @typescript-eslint/parser @typescript-eslint/eslint-plugin prettier
 
-# Build for production
-npm run build
+# Testing
+npm install -D vitest @vitest/coverage-v8
+```
 
-# Lint code
-npm run lint
+### 3. Create Configuration Files
 
-# Format code
-npm run format
+Required configuration files:
+- `tsconfig.json` - TypeScript configuration (strict mode)
+- `.eslintrc.json` or `eslint.config.js` - ESLint configuration
+- `.prettierrc` - Prettier configuration
+- `.gitignore` - Git ignore patterns
+- `.env.example` - Environment variable template
 
-# Type check
-npm run typecheck
+### 4. Create Directory Structure
+
+```bash
+mkdir -p src/{agents,core,memory,tools,orchestration,utils}
+mkdir -p tests/{unit,integration}
+mkdir -p docs examples config scripts
+```
+
+## Development Commands
+
+Once set up, use these standard commands:
+
+```bash
+npm install          # Install dependencies
+npm run dev          # Run development server
+npm test             # Run tests
+npm run test:watch   # Run tests in watch mode
+npm run build        # Build for production
+npm run lint         # Lint code
+npm run format       # Format code
+npm run typecheck    # Type check
 ```
 
 ## Code Conventions
 
 ### TypeScript Guidelines
 
-1. **Use strict TypeScript configuration** - Enable strict mode in tsconfig.json
-2. **Define explicit types** - Avoid `any`; use proper interfaces and type definitions
-3. **Use interfaces for agent contracts** - Define clear interfaces for agent capabilities
-4. **Prefer immutability** - Use `readonly` where appropriate
-
-### Agent Development Patterns
-
-1. **Agent Interface**: All agents should implement a base `Agent` interface
-2. **Tool Registration**: Tools should be registered declaratively with type-safe schemas
-3. **Memory Management**: Use the provided memory abstractions for context persistence
-4. **Error Handling**: Agents should handle errors gracefully with proper logging
+1. **Strict mode enabled** - Use `"strict": true` in tsconfig.json
+2. **Explicit types** - Avoid `any`; use proper interfaces and type definitions
+3. **Interface-driven design** - Define clear interfaces for agent capabilities
+4. **Immutability preferred** - Use `readonly` and `const` where appropriate
 
 ### Naming Conventions
 
-- **Files**: Use kebab-case for file names (`my-agent.ts`)
-- **Classes**: Use PascalCase (`class MyAgent`)
-- **Functions/Variables**: Use camelCase (`const myFunction`)
-- **Constants**: Use UPPER_SNAKE_CASE (`const MAX_RETRIES`)
-- **Interfaces**: Prefix with `I` only if needed to avoid conflicts (`Agent` preferred over `IAgent`)
-- **Types**: Use PascalCase (`type AgentConfig`)
+| Element | Convention | Example |
+|---------|------------|---------|
+| Files | kebab-case | `my-agent.ts` |
+| Classes | PascalCase | `class MyAgent` |
+| Functions/Variables | camelCase | `const myFunction` |
+| Constants | UPPER_SNAKE_CASE | `const MAX_RETRIES` |
+| Interfaces | PascalCase (no I prefix) | `interface Agent` |
+| Types | PascalCase | `type AgentConfig` |
 
 ### Directory Conventions
 
-- Place agent implementations in `src/agents/`
-- Place shared tools in `src/tools/`
-- Keep tests co-located or in parallel `tests/` structure
-- Configuration schemas go in `src/config/` or `config/`
+- Agent implementations: `src/agents/`
+- Shared tools: `src/tools/`
+- Core framework: `src/core/`
+- Tests: `tests/unit/` and `tests/integration/` (or co-located `*.test.ts`)
+- Configuration schemas: `src/config/` or `config/`
+
+## Agent Development Patterns
+
+### Base Agent Interface
+
+All agents should implement a common interface:
+
+```typescript
+interface Agent {
+  readonly id: string;
+  readonly name: string;
+  execute(input: AgentInput): Promise<AgentOutput>;
+}
+```
+
+### Tool Registration
+
+Tools should be registered with type-safe schemas:
+
+```typescript
+interface Tool<TInput, TOutput> {
+  name: string;
+  description: string;
+  schema: ZodSchema<TInput>;
+  execute(input: TInput): Promise<TOutput>;
+}
+```
+
+### Memory Architecture
+
+- **Short-term Memory**: Conversation/task context
+- **Long-term Memory**: Persistent knowledge
+- **Working Memory**: Current task state
 
 ## Testing Requirements
 
-1. **Unit Tests**: Required for all utility functions and core logic
+1. **Unit Tests**: Required for utility functions and core logic
 2. **Integration Tests**: Required for agent workflows and tool integrations
-3. **Test Coverage**: Aim for >80% coverage on core modules
-4. **Naming**: Test files should be named `*.test.ts` or `*.spec.ts`
-
-### Running Tests
+3. **Coverage Target**: >80% on core modules
+4. **Test Naming**: `*.test.ts` or `*.spec.ts`
 
 ```bash
-# Run all tests
-npm test
-
-# Run specific test file
-npm test -- path/to/test.ts
-
-# Run with coverage
-npm test -- --coverage
+npm test                    # Run all tests
+npm test -- path/to/test    # Run specific test
+npm test -- --coverage      # Run with coverage
 ```
 
 ## Git Workflow
 
 ### Branch Naming
 
-- Feature branches: `feature/description`
+- Features: `feature/description`
 - Bug fixes: `fix/description`
 - Refactoring: `refactor/description`
 - Documentation: `docs/description`
 
 ### Commit Messages
 
-Use conventional commits format:
+Use conventional commits:
 
 ```
 type(scope): description
 
 [optional body]
-
-[optional footer]
 ```
 
 Types: `feat`, `fix`, `docs`, `style`, `refactor`, `test`, `chore`
 
-### Pull Request Guidelines
-
-1. Keep PRs focused and reasonably sized
-2. Include tests for new functionality
-3. Update documentation as needed
-4. Ensure all CI checks pass
-
-## Architecture Guidelines
-
-### Agent Design Principles
-
-1. **Single Responsibility**: Each agent should have a clear, focused purpose
-2. **Composability**: Agents should be composable for complex workflows
-3. **Observability**: Include logging and tracing for debugging
-4. **Statelessness**: Prefer stateless agents; externalize state to memory systems
-
-### Tool Design Principles
-
-1. **Idempotency**: Tools should be idempotent where possible
-2. **Schema Validation**: All tool inputs/outputs should have schemas
-3. **Error Messages**: Provide clear, actionable error messages
-4. **Timeouts**: Implement appropriate timeouts for external calls
-
-### Memory Architecture
-
-1. **Short-term Memory**: For conversation/task context
-2. **Long-term Memory**: For persistent knowledge and learning
-3. **Working Memory**: For current task state
-
 ## Security Considerations
 
 1. **Input Validation**: Always validate and sanitize inputs
-2. **Secret Management**: Never hardcode secrets; use environment variables
-3. **Principle of Least Privilege**: Agents should request minimal permissions
+2. **Secret Management**: Use environment variables, never hardcode
+3. **Least Privilege**: Agents request minimal permissions
 4. **Audit Logging**: Log security-relevant actions
 
-## Performance Guidelines
+## Environment Variables
 
-1. **Async Operations**: Use async/await for I/O operations
-2. **Batching**: Batch API calls where possible
-3. **Caching**: Implement caching for repeated queries
-4. **Resource Limits**: Set appropriate limits on memory and execution time
+Create `.env` from `.env.example`:
+
+```bash
+# API Keys
+OPENAI_API_KEY=
+ANTHROPIC_API_KEY=
+
+# Configuration
+LOG_LEVEL=info
+NODE_ENV=development
+```
 
 ## AI Assistant Guidelines
-
-When working on this codebase, AI assistants should:
 
 ### Do
 
@@ -196,82 +232,27 @@ When working on this codebase, AI assistants should:
 - Write tests for new functionality
 - Use TypeScript types properly
 - Keep changes focused and minimal
-- Commit with descriptive messages
+- Commit with descriptive messages following conventional commits
 
 ### Don't
 
 - Make changes without understanding context
-- Introduce new dependencies without justification
+- Introduce dependencies without justification
 - Skip error handling
 - Ignore existing conventions
 - Over-engineer solutions
 - Leave debug code or console.logs in production code
 
-### Code Review Checklist
+### Pre-Commit Checklist
 
-Before submitting changes, verify:
-
-- [ ] Code compiles without errors
-- [ ] All tests pass
-- [ ] New code has appropriate test coverage
+- [ ] Code compiles without errors (`npm run typecheck`)
+- [ ] All tests pass (`npm test`)
+- [ ] New code has test coverage
 - [ ] No security vulnerabilities introduced
 - [ ] Documentation updated if needed
 - [ ] Follows project conventions
-- [ ] No unnecessary complexity added
-
-## Environment Setup
-
-### Prerequisites
-
-- Node.js >= 18.x
-- npm >= 9.x (or pnpm >= 8.x)
-- Git
-
-### Initial Setup
-
-```bash
-# Clone the repository
-git clone <repository-url>
-cd lucidia-agents
-
-# Install dependencies
-npm install
-
-# Copy environment template
-cp .env.example .env
-
-# Configure environment variables
-# Edit .env with your settings
-```
-
-### Environment Variables
-
-Key environment variables (to be defined in `.env`):
-
-```bash
-# API Keys
-OPENAI_API_KEY=           # OpenAI API key (if using)
-ANTHROPIC_API_KEY=        # Anthropic API key (if using)
-
-# Configuration
-LOG_LEVEL=info            # Logging level (debug, info, warn, error)
-NODE_ENV=development      # Environment (development, production, test)
-```
-
-## Troubleshooting
-
-### Common Issues
-
-1. **TypeScript compilation errors**: Run `npm run typecheck` to identify issues
-2. **Test failures**: Check test output, run individual tests for isolation
-3. **Dependency issues**: Delete `node_modules` and run `npm install`
-
-### Getting Help
-
-- Check existing documentation in `/docs`
-- Review similar patterns in the codebase
-- Create an issue for bugs or feature requests
 
 ---
 
-*This CLAUDE.md was created for the initial setup of the Lucidia Agents project. Update this file as the project evolves to reflect current architecture, conventions, and workflows.*
+*Last updated: January 2026*
+*Status: Greenfield project awaiting initial scaffolding*
