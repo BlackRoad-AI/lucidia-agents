@@ -39,5 +39,43 @@ export { AgentOrchestrator } from './core/orchestrator.js';
 export { createAgent } from './core/create-agent.js';
 export { defineTool } from './core/define-tool.js';
 
+// Providers
+export type {
+  Message,
+  ToolCall,
+  LLMResponse,
+  CompletionOptions,
+  StreamChunk,
+  LLMProvider
+} from './providers/index.js';
+
+export {
+  BaseProvider,
+  OpenAIProvider,
+  AnthropicProvider,
+  getProvider,
+  getConfiguredProvider,
+  listProviders
+} from './providers/index.js';
+
+// Built-in tools
+export {
+  shellTool,
+  fileReadTool,
+  fileWriteTool,
+  fileListTool,
+  fileDeleteTool,
+  webFetchTool,
+  webSearchTool,
+  builtInTools,
+  getBuiltInTool,
+  getBuiltInTools,
+  toolCategories
+} from './tools/index.js';
+
+// Plugins
+export type { Plugin, PluginMeta } from './plugins/index.js';
+export { PluginManager, pluginManager } from './plugins/index.js';
+
 // Version
 export const VERSION = '0.1.0';
