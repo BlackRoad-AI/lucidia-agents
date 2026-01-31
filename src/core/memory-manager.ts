@@ -15,6 +15,15 @@ export class MemoryManager implements Memory {
       useEmbeddings: false,
       ...config
     };
+
+    // This in-memory implementation does not support persistence or embeddings.
+    // Explicitly reject these options to avoid a misleading configuration surface.
+    if (this.config.persist || this.config.useEmbeddings || this.config.persistPath) {
+      throw new Error(
+        'MemoryManager: persistence and embeddings are not supported in this in-memory implementation. ' +
+        'Unsupported MemoryConfig options detected: persist, persistPath, or useEmbeddings.'
+      );
+    }
   }
 
   /**
