@@ -43,7 +43,7 @@ export function createAgentCommand(): Command {
 
 async function createAgent(name: string, options: CreateOptions): Promise<void> {
   const agentDir = join(process.cwd(), options.directory);
-  const agentPath = join(agentDir, `${name}.ts`);
+  const agentPath = join(agentDir, `${name}.js`);
 
   if (existsSync(agentPath)) {
     logger.error(`Agent '${name}' already exists at ${agentPath}`);
