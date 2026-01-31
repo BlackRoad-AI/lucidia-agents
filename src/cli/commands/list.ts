@@ -126,5 +126,5 @@ async function listTools(): Promise<void> {
   });
 
   console.log('');
-  logger.dim('  Use `lucidia tool info <name>` for more details');
+  logger.dim('  Run `lucidia list tools` to see this list again');
 }
