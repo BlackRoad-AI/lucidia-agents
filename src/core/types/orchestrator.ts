@@ -29,12 +29,6 @@ export interface Task {
 
   /** Priority (lower = higher priority) */
   priority?: number;
-
-  /** Dependencies on other task IDs */
-  dependsOn?: string[];
-
-  /** Task timeout in ms */
-  timeoutMs?: number;
 }
 
 /**
